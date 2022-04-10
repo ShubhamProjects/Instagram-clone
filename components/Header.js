@@ -52,7 +52,7 @@ const Header = () => {
 					<HomeIcon className='navigationButton' />
 					<MenuIcon className='h-6 md:hidden cursor-pointer' />
 					<div className='relative navigationButton'>
-						<PaperAirplaneIcon className='navigationButton rotate-45' />
+						<PaperAirplaneIcon className='rotate-45' />
 						<div
 							className='absolute -top-2 -right-2 text-xs w-5 h-5
 						bg-red-500 rounded-full items-center flex justify-center
