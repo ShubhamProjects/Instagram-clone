@@ -1,8 +1,13 @@
 import Head from 'next/head';
+import { useContext } from 'react';
 import Feed from '../components/Feed';
 import Header from '../components/Header';
+import Modal from '../components/Modal';
+import { modalContext } from '../modalContext/modalContext';
 
 export default function Home() {
+	const openModal = useContext(modalContext);
+
 	return (
 		<div className='bg-gray-50 h-full'>
 			<Head>
@@ -14,6 +19,7 @@ export default function Home() {
 			<Header />
 
 			<Feed />
+			<div>{openModal && <Modal />}</div>
 		</div>
 	);
 }

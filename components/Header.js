@@ -10,10 +10,14 @@ import {
 import { HomeIcon } from '@heroicons/react/solid';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { setModalContext } from '../modalContext/modalContext';
+import { useContext } from 'react';
 
 const Header = () => {
 	const { data: session } = useSession();
 	const router = useRouter();
+	const modalState = useContext(setModalContext);
+
 	return (
 		<div className='shadow-sm border-b bg-white sticky top-0 z-50'>
 			<div className='flex justify-between max-w-6xl mx-5 lg:mx-auto'>
@@ -71,13 +75,16 @@ const Header = () => {
 								<PaperAirplaneIcon className='rotate-45' />
 								<div
 									className='absolute -top-2 -right-2 text-xs w-5 h-5
-						bg-red-500 rounded-full items-center flex justify-center
-						animate-pulse text-white'
+									bg-red-500 rounded-full items-center flex justify-center
+									animate-pulse text-white'
 								>
 									3
 								</div>
 							</div>
-							<PlusCircleIcon className='navigationButton' />
+							<PlusCircleIcon
+								onClick={modalState}
+								className='navigationButton'
+							/>
 							<UserGroupIcon className='navigationButton' />
 							<HeartIcon className='navigationButton' />
 
