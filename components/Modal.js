@@ -1,8 +1,68 @@
-import { useContext } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { setModalContext } from '../modalContext/modalContext';
+import { CameraIcon } from '@heroicons/react/outline';
+import { db, storage } from '../firebase';
+import {
+	addDoc,
+	collection,
+	doc,
+	serverTimestamp,
+	updateDoc,
+} from 'firebase/firestore';
+import { useSession } from 'next-auth/react';
+import { ref, getDownloadURL, uploadString } from 'firebase/storage';
 
 const Modal = () => {
+	const { data: session } = useSession();
 	const modalState = useContext(setModalContext);
+	const filePicker = useRef(null);
+	const [selectedFile, setSelectedFile] = useState(null);
+	const [caption, setCaption] = useState('');
+	const [loading, setLoading] = useState(false);
+
+	const addImageToPost = (e) => {
+		const reader = new FileReader();
+		if (e.target.files[0]) {
+			reader.readAsDataURL(e.target.files[0]);
+		}
+
+		reader.onload = (readerEvent) => {
+			setSelectedFile(readerEvent.target.result);
+		};
+	};
+
+	const captureCaption = (e) => {
+		setCaption(e.target.value);
+	};
+
+	const uploadPost = async () => {
+		if (loading) return;
+
+		setLoading(true);
+
+		const docRef = await addDoc(collection(db, 'posts'), {
+			userName: session.user.username,
+			caption: caption,
+			profileImg: session.user.image,
+			timeStamp: serverTimestamp(),
+		});
+
+		const imageRef = ref(storage, `posts/${docRef.id}/image`);
+
+		await uploadString(imageRef, selectedFile, 'data_url').then(
+			async (snapshot) => {
+				const downloadUrl = await getDownloadURL(imageRef);
+				await updateDoc(doc(db, 'posts', docRef.id), {
+					image: downloadUrl,
+				});
+			}
+		);
+
+		modalState();
+		setLoading(false);
+		setCaption('');
+		setSelectedFile(null);
+	};
 
 	return (
 		<div
@@ -18,29 +78,56 @@ const Modal = () => {
 			border-2 border-slate-300 -z-[10] drop-shadow-xl bg-white
 			rounded-lg'
 			>
-				<img
-					src='https://links.papareact.com/ocw'
-					layout='fill'
-					objectFit='contain'
-					alt=''
-					className='border-b-2 h-44'
-				/>
-
+				<div className='border-b-2 h-44 p-2 flex items-center justify-center'>
+					{selectedFile ? (
+						<>
+							<img
+								src={selectedFile}
+								layout='fill'
+								alt=''
+								className='border-b-2 h-44'
+							/>
+							{loading && (
+								<h1 className='absolute animate-pulse font-bold text-white'>
+									Uploading...
+								</h1>
+							)}
+						</>
+					) : (
+						<CameraIcon className='h-20 w-20 text-red-600' />
+					)}
+				</div>
+				<div>
+					<input
+						ref={filePicker}
+						type='file'
+						hidden
+						onChange={addImageToPost}
+					/>
+				</div>
 				<input
-					className='ml-4 mt-2 w-[91%]'
+					className='ml-1 mt-2 w-[91%] focus:ring-0 border-none'
+					type='text'
+					value={caption}
+					onChange={captureCaption}
 					placeholder='Enter your caption...'
 				/>
 
-				<div className='flex justify-around mt-4'>
+				<div className='flex justify-around mt-1'>
 					<button
+						onClick={() => filePicker.current.click()}
 						className='rounded-lg hover:bg-blue-400 p-2 
-					border-2 w-40 bg-blue-100 font-semibold '
+					border-2 w-40 bg-blue-100 justify-around flex items-center font-semibold '
 					>
+						<CameraIcon className='w-6 w-6 text-red-600' />
 						Select Photo
 					</button>
+
 					<button
+						disabled={!selectedFile}
+						onClick={uploadPost}
 						className='rounded-lg hover:bg-blue-400 p-2 
-					border-2 w-40 bg-blue-100 font-semibold'
+					border-2 w-40 bg-blue-100 font-semibold disabled:cursor-not-allowed disabled:bg-gray-100'
 					>
 						Post
 					</button>
