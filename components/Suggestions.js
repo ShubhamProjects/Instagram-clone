@@ -1,8 +1,11 @@
 import faker from '@faker-js/faker';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { setDeveloperModalContext } from '../modalContext/modalContext';
 
 const Suggestions = () => {
 	const [suggestion, setSugestion] = useState([]);
+	const [developerClick, setDeveloperClick] = useState(true);
+	const developerModalState = useContext(setDeveloperModalContext);
 
 	useEffect(() => {
 		const suggest = [...Array(5)].map((_, i) => ({
@@ -11,6 +14,11 @@ const Suggestions = () => {
 		}));
 		setSugestion(suggest);
 	}, []);
+
+	const developerModalclick = () => {
+		setDeveloperClick(false);
+		developerModalState();
+	};
 
 	return (
 		<div className='mt-4 ml-10'>
@@ -41,6 +49,22 @@ const Suggestions = () => {
 					<button className='text-xs text-bold text-blue-500'>Follow</button>
 				</div>
 			))}
+
+			<div
+				onClick={developerModalclick}
+				className='mt-20 hover:cursor-pointer flex justify-center'
+			>
+				<span className='flex h-3 w-3'>
+					{developerClick && (
+						<span className='animate-ping absolute inline-flex h-6 w-6 rounded-full bg-sky-400 opacity-75'></span>
+					)}
+					<span className='relative inline-flex rounded-full h-3 w-3 bg-sky-500'></span>
+				</span>
+				<p className='text-sm text-black font-thin italic'>
+					Powered by -
+					<span className='text-md font-medium'> Shubham Vishwakarma</span>
+				</p>
+			</div>
 		</div>
 	);
 };
