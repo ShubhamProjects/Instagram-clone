@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import { setDeveloperModalContext } from '../modalContext/modalContext';
-import Image from 'next/image';
 
 const DeveloperModal = () => {
 	const developerModalState = useContext(setDeveloperModalContext);
