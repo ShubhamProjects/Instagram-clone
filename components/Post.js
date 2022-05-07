@@ -190,7 +190,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
 				</form>
 			)}
 
-			{deletePost && (
+			{session && deletePost && (
 				<DeletePostModal deleteModal={deletePostModal} onDelete={onDelete} />
 			)}
 		</div>
