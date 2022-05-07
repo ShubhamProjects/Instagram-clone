@@ -1,5 +1,5 @@
 {
     "rewrites":  [
-      {"source": "/(.*)", "destination": "/pages/auth/signin"}
+      {"source": "/(.*)", "destination": "/auth/signin"}
     ]
   }
