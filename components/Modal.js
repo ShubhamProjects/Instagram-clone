@@ -74,7 +74,7 @@ const Modal = () => {
 				onClick={(e) => {
 					e.stopPropagation();
 				}}
-				className='fixed h-72 w-96
+				className='fixed p-2 w-72 md:w-96
 			border-2 border-slate-300 -z-[10] drop-shadow-xl bg-white
 			rounded-lg'
 			>
@@ -116,18 +116,18 @@ const Modal = () => {
 				<div className='flex justify-around mt-1'>
 					<button
 						onClick={() => filePicker.current.click()}
-						className='rounded-lg hover:bg-blue-400 p-2 
-					border-2 w-40 bg-blue-100 justify-around flex items-center font-semibold '
+						className='rounded-lg hover:bg-blue-400 pt-1 pb-1 md:p-2 
+					border-2 w-36 m-1 md:w-40 bg-blue-100 justify-around flex items-center font-semibold '
 					>
-						<CameraIcon className='w-6 w-6 text-red-600' />
+						<CameraIcon className='h-6 w-6 text-red-600' />
 						Select Photo
 					</button>
 
 					<button
 						disabled={!selectedFile}
 						onClick={uploadPost}
-						className='rounded-lg hover:bg-blue-400 p-2 
-					border-2 w-40 bg-blue-100 font-semibold disabled:cursor-not-allowed disabled:bg-gray-100'
+						className='rounded-lg hover:bg-blue-400 pt-1 pb-1 md:p-2
+					border-2 w-36 m-1 md:w-40 bg-blue-100 font-semibold disabled:cursor-not-allowed disabled:bg-gray-100'
 					>
 						Post
 					</button>

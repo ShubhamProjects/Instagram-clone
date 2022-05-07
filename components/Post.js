@@ -22,6 +22,7 @@ import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import Moment from 'react-moment';
+import DeletePostModal from './DeletePostModal';
 
 const Post = ({ id, username, userImg, img, caption }) => {
 	const { data: session } = useSession();
@@ -29,6 +30,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
 	const [commentText, setCommentText] = useState('');
 	const [likes, setLikes] = useState([]);
 	const [hasliked, setHasliked] = useState([]);
+	const [deletePost, setDeletePost] = useState(false);
 
 	const sendComment = async (e) => {
 		e.preventDefault();
@@ -52,6 +54,14 @@ const Post = ({ id, username, userImg, img, caption }) => {
 				username: session.user.username,
 			});
 		}
+	};
+
+	const deletePostModal = () => {
+		setDeletePost(!deletePost);
+	};
+
+	const onDelete = async () => {
+		await deleteDoc(doc(db, 'posts', id));
 	};
 
 	useEffect(() => {
@@ -93,7 +103,10 @@ const Post = ({ id, username, userImg, img, caption }) => {
                 border p-1 mr-3'
 				/>
 				<p className='flex-1 font-bold'>{username}</p>
-				<DotsHorizontalIcon className='h-5' />
+				<DotsHorizontalIcon
+					onClick={deletePostModal}
+					className='h-5 cursor-pointer'
+				/>
 			</div>
 			<img src={img} alt='' className='object-cover w-full' />
 
@@ -131,17 +144,23 @@ const Post = ({ id, username, userImg, img, caption }) => {
 				scrollbar-thin'
 				>
 					{comment?.map((item) => (
-						<div className='flex items-center space-x-2 mb-3' key={item.id}>
-							<img
-								className='h-7 rounded-full'
-								alt=''
-								src={item.data().userImage}
-							/>
-							<p className='text-sm flex-1'>
-								<span className='font-bold mr-2'>{item.data().username}</span>
-								{item.data().comment}
-							</p>
-
+						<div
+							className='flex justify-between items-center space-x-2 mb-3'
+							key={item.id}
+						>
+							<div className='flex flex-col'>
+								<div className='flex items-center'>
+									<img
+										className='h-7 rounded-full w-7'
+										alt=''
+										src={item.data().userImage}
+									/>
+									<span className='font-bold mr-2 ml-2'>
+										{item.data().username}
+									</span>
+								</div>
+								<p className='text-sm ml-9 flex-1'>{item.data().comment}</p>
+							</div>
 							<Moment fromNow className='pr-5 text-xs'>
 								{item.data().timeStamp?.toDate()}
 							</Moment>
@@ -169,6 +188,10 @@ const Post = ({ id, username, userImg, img, caption }) => {
 						Post
 					</button>
 				</form>
+			)}
+
+			{deletePost && (
+				<DeletePostModal deleteModal={deletePostModal} onDelete={onDelete} />
 			)}
 		</div>
 	);

@@ -5,7 +5,6 @@ import {
 	UserGroupIcon,
 	HeartIcon,
 	PaperAirplaneIcon,
-	MenuIcon,
 } from '@heroicons/react/outline';
 import { HomeIcon } from '@heroicons/react/solid';
 import { signIn, signOut, useSession } from 'next-auth/react';
@@ -62,13 +61,17 @@ const Header = () => {
 					</div>
 				</div>
 
-				<div className='flex items-center justify-end space-x-4'>
+				<div className='flex items-center justify-end space-x-2'>
 					<HomeIcon
 						onClick={() => router.push('/')}
 						className='navigationButton'
 					/>
-					<MenuIcon className='h-6 md:hidden cursor-pointer' />
-
+					{session && (
+						<PlusCircleIcon
+							onClick={modalState}
+							className='w-14 h-7 md:hidden cursor-pointer'
+						/>
+					)}
 					{session ? (
 						<>
 							<div className='relative navigationButton'>
