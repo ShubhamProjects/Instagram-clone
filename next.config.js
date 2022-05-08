@@ -11,7 +11,6 @@ const nextConfig = {
 		loader: 'akamai',
 		path: '',
 	},
-	distDir: 'build',
 };
 
 module.exports = nextConfig;
