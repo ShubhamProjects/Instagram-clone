@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from 'react';
-import { setModalContext } from '../modalContext/modalContext';
+import { setModalContext, user } from '../modalContext/modalContext';
 import { CameraIcon } from '@heroicons/react/outline';
 import { db, storage } from '../firebase';
 import {
@@ -9,11 +9,11 @@ import {
 	serverTimestamp,
 	updateDoc,
 } from 'firebase/firestore';
-import { useSession } from 'next-auth/react';
 import { ref, getDownloadURL, uploadString } from 'firebase/storage';
 
 const Modal = () => {
-	const { data: session } = useSession();
+	const data = useContext(user);
+
 	const modalState = useContext(setModalContext);
 	const filePicker = useRef(null);
 	const [selectedFile, setSelectedFile] = useState(null);
@@ -41,9 +41,9 @@ const Modal = () => {
 		setLoading(true);
 
 		const docRef = await addDoc(collection(db, 'posts'), {
-			userName: session.user.username,
+			userName: data.user.displayName,
 			caption: caption,
-			profileImg: session.user.image,
+			profileImg: data.user.photoURL,
 			timeStamp: serverTimestamp(),
 		});
 

@@ -18,14 +18,15 @@ import {
 	serverTimestamp,
 	setDoc,
 } from 'firebase/firestore';
-import { useSession } from 'next-auth/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { db } from '../firebase';
 import Moment from 'react-moment';
 import DeletePostModal from './DeletePostModal';
+import { user } from '../modalContext/modalContext';
 
 const Post = ({ id, username, userImg, img, caption }) => {
-	const { data: session } = useSession();
+	const data = useContext(user);
+
 	const [comment, setComment] = useState([]);
 	const [commentText, setCommentText] = useState('');
 	const [likes, setLikes] = useState([]);
@@ -40,18 +41,18 @@ const Post = ({ id, username, userImg, img, caption }) => {
 
 		await addDoc(collection(db, 'posts', id, 'comments'), {
 			comment: commentToSend,
-			username: session.user.username,
-			userImage: session.user.image,
+			username: data?.user?.displayName,
+			userImage: data?.user?.photoURL,
 			timeStamp: serverTimestamp(),
 		});
 	};
 
 	const likePosts = async () => {
 		if (hasliked) {
-			await deleteDoc(doc(db, 'posts', id, 'likes', session.user.uid));
+			await deleteDoc(doc(db, 'posts', id, 'likes', data?.user?.uid));
 		} else {
-			await setDoc(doc(db, 'posts', id, 'likes', session.user.uid), {
-				username: session.user.username,
+			await setDoc(doc(db, 'posts', id, 'likes', data?.user?.uid), {
+				username: data?.user?.displayName,
 			});
 		}
 	};
@@ -88,7 +89,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
 	useEffect(
 		() =>
 			setHasliked(
-				likes.findIndex((like) => like.id === session?.user?.uid) !== -1
+				likes.findIndex((like) => like.id === data?.user?.uid) !== -1
 			),
 		[likes]
 	);
@@ -110,7 +111,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
 			</div>
 			<img src={img} alt='' className='object-cover w-full' />
 
-			{session && (
+			{data && (
 				<div className='flex justify-between px-4 pt-4'>
 					<div className='flex space-x-4'>
 						{hasliked ? (
@@ -169,7 +170,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
 				</div>
 			)}
 
-			{session && (
+			{data && (
 				<form className='flex items-center p-4'>
 					<EmojiHappyIcon className='h-7' />
 					<input
@@ -190,7 +191,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
 				</form>
 			)}
 
-			{session && deletePost && (
+			{data && deletePost && (
 				<DeletePostModal deleteModal={deletePostModal} onDelete={onDelete} />
 			)}
 		</div>

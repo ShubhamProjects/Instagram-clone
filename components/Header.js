@@ -1,6 +1,4 @@
 import Image from 'next/image';
-import { getProviders, signIn as SignIntoProvider } from 'next-auth/react';
-
 import {
 	SearchIcon,
 	PlusCircleIcon,
@@ -9,15 +7,19 @@ import {
 	PaperAirplaneIcon,
 } from '@heroicons/react/outline';
 import { HomeIcon } from '@heroicons/react/solid';
-import { signIn, signOut, useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import { setModalContext } from '../modalContext/modalContext';
+import {
+	setModalContext,
+	signInContext,
+	signOutContext,
+	user,
+} from '../modalContext/modalContext';
 import { useContext } from 'react';
 
-const Header = ({ providers }) => {
-	const { data: session } = useSession();
-	const router = useRouter();
+const Header = () => {
 	const modalState = useContext(setModalContext);
+	const data = useContext(user);
+	const signIn = useContext(signInContext);
+	const signOut = useContext(signOutContext);
 
 	return (
 		<div className='shadow-sm border-b bg-white sticky top-0 z-50'>
@@ -34,10 +36,7 @@ const Header = ({ providers }) => {
 					/>
 				</div>
 
-				<div
-					onClick={() => router.push('/')}
-					className='relative flex-shrink-0 lg:hidden w-10 cursor-pointer'
-				>
+				<div className='relative flex-shrink-0 lg:hidden w-10 cursor-pointer'>
 					<Image
 						src='https://links.papareact.com/jjm'
 						layout='fill'
@@ -64,17 +63,14 @@ const Header = ({ providers }) => {
 				</div>
 
 				<div className='flex items-center justify-end space-x-2'>
-					<HomeIcon
-						onClick={() => router.push('/')}
-						className='navigationButton'
-					/>
-					{session && (
+					<HomeIcon className='navigationButton' />
+					{data && (
 						<PlusCircleIcon
 							onClick={modalState}
 							className='w-14 h-7 md:hidden cursor-pointer'
 						/>
 					)}
-					{session ? (
+					{data ? (
 						<>
 							<div className='relative navigationButton'>
 								<PaperAirplaneIcon className='rotate-45' />
@@ -95,29 +91,18 @@ const Header = ({ providers }) => {
 
 							<img
 								onClick={signOut}
-								src={session?.user?.image}
+								src={data?.user?.photoURL}
 								alt='profile pic'
 								className='h-10 w-10 rounded-full cursor-pointer'
 							/>
 						</>
 					) : (
-						<button onClick={() => SignIntoProvider()}>SignIn</button>
+						<button onClick={signIn}>SignIn</button>
 					)}
 				</div>
 			</div>
 		</div>
 	);
 };
-
-// export async function getServerSideProps() {
-// 	const providers = await getProviders();
-// 	console.log(getProviders(), providers);
-
-// 	return {
-// 		props: {
-// 			providers,
-// 		},
-// 	};
-// }
 
 export default Header;
