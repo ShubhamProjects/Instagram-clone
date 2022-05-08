@@ -8,7 +8,10 @@ const nextConfig = {
 			'linkedin.com',
 			'github.com',
 		],
+		loader: 'akamai',
+		path: '',
 	},
+	distDir: 'build',
 };
 
 module.exports = nextConfig;

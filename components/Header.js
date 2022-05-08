@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import { getProviders, signIn as SignIntoProvider } from 'next-auth/react';
+
 import {
 	SearchIcon,
 	PlusCircleIcon,
@@ -12,7 +14,7 @@ import { useRouter } from 'next/router';
 import { setModalContext } from '../modalContext/modalContext';
 import { useContext } from 'react';
 
-const Header = () => {
+const Header = ({ providers }) => {
 	const { data: session } = useSession();
 	const router = useRouter();
 	const modalState = useContext(setModalContext);
@@ -99,12 +101,23 @@ const Header = () => {
 							/>
 						</>
 					) : (
-						<button onClick={signIn}>SignIn</button>
+						<button onClick={() => SignIntoProvider()}>SignIn</button>
 					)}
 				</div>
 			</div>
 		</div>
 	);
 };
+
+// export async function getServerSideProps() {
+// 	const providers = await getProviders();
+// 	console.log(getProviders(), providers);
+
+// 	return {
+// 		props: {
+// 			providers,
+// 		},
+// 	};
+// }
 
 export default Header;
