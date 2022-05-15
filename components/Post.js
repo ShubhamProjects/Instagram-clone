@@ -41,18 +41,18 @@ const Post = ({ id, username, userImg, img, caption }) => {
 
 		await addDoc(collection(db, 'posts', id, 'comments'), {
 			comment: commentToSend,
-			username: data?.user?.displayName,
-			userImage: data?.user?.photoURL,
+			username: data?.displayName,
+			userImage: data?.photoURL,
 			timeStamp: serverTimestamp(),
 		});
 	};
 
 	const likePosts = async () => {
 		if (hasliked) {
-			await deleteDoc(doc(db, 'posts', id, 'likes', data?.user?.uid));
+			await deleteDoc(doc(db, 'posts', id, 'likes', data?.uid));
 		} else {
-			await setDoc(doc(db, 'posts', id, 'likes', data?.user?.uid), {
-				username: data?.user?.displayName,
+			await setDoc(doc(db, 'posts', id, 'likes', data?.uid), {
+				username: data?.displayName,
 			});
 		}
 	};
@@ -87,10 +87,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
 	);
 
 	useEffect(
-		() =>
-			setHasliked(
-				likes.findIndex((like) => like.id === data?.user?.uid) !== -1
-			),
+		() => setHasliked(likes.findIndex((like) => like.id === data?.uid) !== -1),
 		[likes]
 	);
 
@@ -130,12 +127,13 @@ const Post = ({ id, username, userImg, img, caption }) => {
 				</div>
 			)}
 
-			<p className='p-5 truncate'>
-				{likes.length > 0 && (
-					<p className='font-bold m-1'>{`${likes.length} ${
-						likes.length > 1 ? 'likes' : 'like'
-					}`}</p>
-				)}
+			{likes.length > 0 && (
+				<p className='font-bold pl-5 pt-2'>{`${likes.length} ${
+					likes.length > 1 ? 'likes' : 'like'
+				}`}</p>
+			)}
+
+			<p className='pl-5'>
 				<span className='font-bold mr-1'>{username}</span> {caption}
 			</p>
 

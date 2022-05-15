@@ -8,8 +8,13 @@ import {
 	signInContext,
 	signOutContext,
 } from '../modalContext/modalContext';
-import { useState } from 'react';
-import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { useState, useEffect } from 'react';
+import {
+	signInWithPopup,
+	GoogleAuthProvider,
+	signOut,
+	onAuthStateChanged,
+} from 'firebase/auth';
 import { authentication } from '../firebase';
 
 function MyApp({ Component, pageProps: { ...pageProps } }) {
@@ -29,7 +34,7 @@ function MyApp({ Component, pageProps: { ...pageProps } }) {
 		const provider = new GoogleAuthProvider();
 		signInWithPopup(authentication, provider)
 			.then((result) => {
-				setUserData(result);
+				setUserData(result?.user);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -46,6 +51,18 @@ function MyApp({ Component, pageProps: { ...pageProps } }) {
 				console.log(error);
 			});
 	};
+
+	useEffect(
+		() =>
+			onAuthStateChanged(authentication, (userAuth) => {
+				if (userAuth) {
+					setUserData(userAuth);
+				} else {
+					console.log('User not logged in');
+				}
+			}),
+		[]
+	);
 
 	return (
 		<user.Provider value={userData}>

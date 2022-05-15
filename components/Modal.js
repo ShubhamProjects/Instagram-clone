@@ -41,9 +41,9 @@ const Modal = () => {
 		setLoading(true);
 
 		const docRef = await addDoc(collection(db, 'posts'), {
-			userName: data.user.displayName,
+			userName: data?.displayName,
 			caption: caption,
-			profileImg: data.user.photoURL,
+			profileImg: data?.photoURL,
 			timeStamp: serverTimestamp(),
 		});
 

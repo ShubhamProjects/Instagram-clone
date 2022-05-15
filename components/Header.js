@@ -91,7 +91,7 @@ const Header = () => {
 
 							<img
 								onClick={signOut}
-								src={data?.user?.photoURL}
+								src={data?.photoURL}
 								alt='profile pic'
 								className='h-10 w-10 rounded-full cursor-pointer'
 							/>
